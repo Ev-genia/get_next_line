@@ -6,87 +6,63 @@
 /*   By: mlarra <mlarra@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 15:41:29 by mlarra            #+#    #+#             */
-/*   Updated: 2022/09/27 22:43:39 by mlarra           ###   ########.fr       */
+/*   Updated: 2022/09/28 00:34:42 by mlarra           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-char	*ft_reading_buf(int fd, char *buf, char *tail)
+static char	*ft_ret_line(ssize_t nbytes, char *line)
 {
-	int		nbytes;
+	if (!nbytes && line[nbytes] == '\0')
+	{
+		free(line);
+		return (0);
+	}
+	return (line);
+}
+
+static char	*ft_read_line(char *line, char **tail, int fd)
+{
+	char	buff[BUFFER_SIZE + 1];
+	ssize_t	nbytes;
+	char	*tmp;
 
 	nbytes = 1;
-	while (nbytes != 0 && ft_strchr(tail, '\n') == NULL)
+	while (nbytes)
 	{
-		nbytes = read(fd, buf, BUFFER_SIZE);
+		nbytes = read(fd, buff, BUFFER_SIZE);
 		if (nbytes < 0)
 		{
-			free ((void *)buf);
+			free (line);
 			return ((void *)0);
 		}
-		buf[nbytes] = '\0';
-		if (tail)
-			tail = ft_strjoin(tail, buf);
-		else
-			tail = ft_substr(buf, 0, nbytes);
+		buff[nbytes] = '\0';
+		line = ft_strjoin(line, buff);
+		if (ft_strchr(line, '\n'))
+		{
+			*tail = ft_strdup(ft_strchr(line, '\n') + 1);
+			tmp = line;
+			line = ft_substr(line, 0, ft_strlen(line) - ft_strlen(*tail));
+			free(tmp);
+			return (ft_ret_line(nbytes, line));
+		}
 	}
-	free((void *)buf);
-	return (tail);
-}
-
-char	*ft_get_line(char *tail)
-{
-	int		i;
-	char	*dest;
-
-	i = 0;
-	while (tail[i] && tail[i] != '\n')
-		i++;
-	if (tail[i] == '\n')
-		i++;
-	dest = ft_substr(tail, 0, i);
-	return (dest);
-}
-
-char	*ft_get_tail(char *tail)
-{
-	int		i;
-	char	*ret_tail;
-
-	i = 0;
-	while (tail[i] && tail[i] != '\n')
-		i++;
-	i++;
-	ret_tail = ft_substr(tail, i, ft_strlen(tail));
-	free ((void *)tail);
-	return (ret_tail);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*buf;
+	char		*line;
 	char		*dest;
 	static char	*tail[1025];
 
-	if (fd < 0 || BUFFER_SIZE < 1)
+	if (fd < 0 || BUFFER_SIZE < 1 || fd > 1025)
 		return ((void *)0);
-	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buf)
-		return ((void *)0);
-	tail[fd] = ft_reading_buf(fd, buf, tail[fd]);
-	if (!tail[fd] || tail[fd][0] == '\0')
-	{
-		free((void *)tail[fd]);
-		tail[fd] = 0;
-		return ((void *)0);
-	}
-	dest = ft_get_line(tail[fd]);
-	if (!dest || dest[0] == '\0')
-	{
-		free ((void *)dest);
-		return ((void *)0);
-	}
-	tail[fd] = ft_get_tail(tail[fd]);
-	return (dest);
+	if (!tail[fd])
+		tail[fd] = ft_strdup("");
+	line = ft_strdup(tail[fd]);
+	free(tail[fd]);
+	tail[fd] = NULL;
+	line = ft_read_line(line, &tail[fd], fd);
+	return (line);
 }

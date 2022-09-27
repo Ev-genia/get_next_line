@@ -6,7 +6,7 @@
 /*   By: mlarra <mlarra@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 15:41:56 by mlarra            #+#    #+#             */
-/*   Updated: 2022/09/27 22:43:54 by mlarra           ###   ########.fr       */
+/*   Updated: 2022/09/28 00:02:03 by mlarra           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,6 @@ char	*get_next_line(int fd);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
+char	*ft_strdup(const char *s1);
 size_t	ft_strlen(const char *s);
 #endif
