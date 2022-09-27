@@ -6,7 +6,7 @@
 /*   By: mlarra <mlarra@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 15:41:29 by mlarra            #+#    #+#             */
-/*   Updated: 2022/09/28 00:34:42 by mlarra           ###   ########.fr       */
+/*   Updated: 2022/09/28 00:45:23 by mlarra           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,12 @@ static char	*ft_read_line(char *line, char **tail, int fd)
 			return (ft_ret_line(nbytes, line));
 		}
 	}
+	return (ft_ret_line(nbytes, line));
 }
 
 char	*get_next_line(int fd)
 {
 	char		*line;
-	char		*dest;
 	static char	*tail[1025];
 
 	if (fd < 0 || BUFFER_SIZE < 1 || fd > 1025)
